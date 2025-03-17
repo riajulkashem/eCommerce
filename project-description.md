@@ -1,8 +1,4 @@
-Dear Candidate,
-
-Thank you for your interest in joining Muslin International Limited! As part of our interview process, we have a project assignment for you to complete. This will help us evaluate your skills and approach to development.
-
-## Project Name: E-commerce Online Platform
+## E-commerce Online Platform
 ## Project Description:
 You are required to develop the backend of a web application. The project consists of three sections:
 
