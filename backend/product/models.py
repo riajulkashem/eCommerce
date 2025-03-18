@@ -46,6 +46,7 @@ class Stock(TimeStampedModel):
     def __str__(self):
         return f"{self.product.name} - {self.quantity} in stock"
 
+
 # Create Stock Automatically On Create New Products
 @receiver(post_save, sender=Product)
 def create_stock(sender, instance, created, **kwargs):

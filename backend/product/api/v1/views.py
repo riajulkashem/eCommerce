@@ -28,5 +28,5 @@ class StockViewSet(viewsets.ModelViewSet):
     permission_classes = [IsEcommerceStaffOrReadOnly]
 
     def create(self, request, *args, **kwargs):
-        response = {'message': 'Create function is not offered in this path.'}
+        response = {"message": "Create function is not offered in this path."}
         return Response(response, status=status.HTTP_403_FORBIDDEN)

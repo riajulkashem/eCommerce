@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse_lazy
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from product.models import Product, Category, Stock
+from product.models import Product, Category
 from user.models import EcommerceUser
 
 
