@@ -30,4 +30,4 @@ class CategorySerializer(EcommerceBaseSerializer):
 class StockSerializer(EcommerceBaseSerializer):
     class Meta:
         model = Stock
-        fields = ["name"]
+        fields = ["quantity", "location", "product"]
