@@ -80,7 +80,11 @@ class EcommerceUserAPITestCase(APITestCase):
     def test_password_change_invalid(self):
         url = reverse("user-password-change")
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
-        response = self.client.post(url, {"old_password": "wrong pass", "new_password": "newpassss"}, format="json")
+        response = self.client.post(
+            url,
+            {"old_password": "wrong pass", "new_password": "newpassss"},
+            format="json",
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_profile_update_success(self):
@@ -120,10 +124,18 @@ class EcommerceUserAPITestCase(APITestCase):
 
     def test_token_refresh_success(self):
         url = reverse("token_refresh")
-        response = self.client.post(url, {"refresh": self.refresh_token, "access": self.access_token}, format="json")
+        response = self.client.post(
+            url,
+            {"refresh": self.refresh_token, "access": self.access_token},
+            format="json",
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_token_refresh_invalid(self):
         url = reverse("token_refresh")
-        response = self.client.post(url, {"refresh": "invalide refressh token", "access": self.access_token}, format="json")
+        response = self.client.post(
+            url,
+            {"refresh": "invalide refressh token", "access": self.access_token},
+            format="json",
+        )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

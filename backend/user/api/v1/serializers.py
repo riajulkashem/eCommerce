@@ -33,9 +33,6 @@ class PasswordChangeSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True, min_length=8)
 
     def validate_old_password(self, value):
-        context = self.context
-        print("context: ", context)
-        print(f"Keys: {context.keys()}")
         user = self.context["request"].user
         if not user.check_password(value):
             raise serializers.ValidationError("Old password is incorrect")

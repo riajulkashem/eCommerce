@@ -1,3 +1,88 @@
-from django.test import TestCase
+import json
 
-# Create your tests here.
+from rest_framework.test import APITestCase, APIClient
+from rest_framework import status
+from rest_framework.reverse import reverse_lazy
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from product.models import Product, Category
+from user.models import EcommerceUser
+
+
+class ProductViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.staff_user = EcommerceUser.objects.create_user(
+            email="staff@mail.com", password="password", is_staff=True
+        )
+        self.regular_user = EcommerceUser.objects.create_user(
+            email="staff2@mail.com", password="password", is_staff=False
+        )
+        self.category = Category.objects.create(
+            name="Test Category", created_by_id=self.staff_user.id
+        )
+        self.product_data = {
+            "name": "Test Product",
+            "description": "Test Description",
+            "price": 100,
+            "category": self.category,
+            "created_by_id": self.staff_user.id,
+        }
+
+        self.product = Product.objects.create(**self.product_data)
+
+        # Create a test user for authenticated tests
+        self.token = RefreshToken.for_user(self.staff_user)
+        self.access_token = str(self.token.access_token)
+        self.refresh_token = str(self.token)
+
+    def test_product_list(self):
+        data = self.product_data.copy()
+        for i in range(5):
+            data["name"] = f"Product {i}"
+            Product.objects.create(**data)
+        response = self.client.get(reverse_lazy("product-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), Product.objects.count())
+
+    def test_product_create_as_staff(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
+        data = self.product_data.copy()
+        data["name"] = "New Product"
+        data["category"] = self.category.id
+        response = self.client.post(reverse_lazy("product-list"), data=data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_product_update_as_staff(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
+        data = {
+            "name": "Updated Product",
+            "price": 100,
+            "category": self.category.id,
+        }
+        response = self.client.put(
+            reverse_lazy("product-detail", kwargs={"pk": self.product.id}),
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.name, data["name"])
+
+    def test_product_delete_as_staff(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
+        response = self.client.delete(
+            reverse_lazy("product-detail", kwargs={"pk": self.product.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_product_create_as_regular_user(self):
+        token = RefreshToken.for_user(self.regular_user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {str(token.access_token)}")
+        self.product_data["category"] = self.category.id
+        response = self.client.post(reverse_lazy("product-list"), self.product_data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_product_create_unauthenticated(self):
+        response = self.client.post(reverse_lazy("product-list"), self.product_data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
