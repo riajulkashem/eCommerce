@@ -26,3 +26,21 @@ class RegistrationSerializer(serializers.ModelSerializer):
             email=email, password=password, first_name=first_name, last_name=last_name
         )
         return user
+
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True, min_length=8)
+
+    def validate_old_password(self, value):
+        context = self.context
+        print("context: ", context)
+        print(f"Keys: {context.keys()}")
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Old password is incorrect")
+        return value
+
+    def save(self):
+        user = self.context['request'].user
+        user.set_password(self.validated_data['new_password'])
+        user.save()
