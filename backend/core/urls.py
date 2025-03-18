@@ -18,8 +18,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from user.views import home
+
 urlpatterns = [
+    path("", home, name="home"),
     path("admin/", admin.site.urls),
+    # User APP urls
     path("api/v1/", include("user.api.v1.urls")),
+    # Product APP urls
     path("api/v1/", include("product.api.v1.urls")),
 ]
