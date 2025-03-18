@@ -16,7 +16,7 @@ class ProductViewSetTestCase(APITestCase):
             email="staff@mail.com", password="password", is_staff=True
         )
         self.regular_user = EcommerceUser.objects.create_user(
-            email="staff2@mail.com", password="password", is_staff=False
+            email="regular@mail.com", password="password", is_staff=False
         )
         self.category = Category.objects.create(
             name="Test Category", created_by_id=self.staff_user.id
@@ -86,3 +86,57 @@ class ProductViewSetTestCase(APITestCase):
     def test_product_create_unauthenticated(self):
         response = self.client.post(reverse_lazy("product-list"), self.product_data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class CategoryViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.staff_user = EcommerceUser.objects.create_user(
+            email="staff@mail.com", password="password", is_staff=True
+        )
+        self.regular_user = EcommerceUser.objects.create_user(
+            email="regular@mail.com", password="password"
+        )
+        self.category = Category.objects.create(name="Test Category")
+
+        # Create a test user for authenticated tests
+        self.token = RefreshToken.for_user(self.staff_user)
+        self.access_token = str(self.token.access_token)
+        self.refresh_token = str(self.token)
+
+    def test_category_list(self):
+        response = self.client.get(reverse_lazy("category-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_category_create_as_staff(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
+        response = self.client.post(
+            reverse_lazy("category-list"), {"name": "New Category"}
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.json()["name"], "New Category")
+
+    def test_category_update_as_staff(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
+        response = self.client.put(
+            reverse_lazy("category-detail", kwargs={"pk": self.category.id}),
+            data=json.dumps({"name": "Updated Category"}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["name"], "Updated Category")
+
+    def test_category_delete_as_staff(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
+        response = self.client.delete(
+            reverse_lazy("category-detail", kwargs={"pk": self.category.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_category_delete_as_regular_user(self):
+        token = RefreshToken.for_user(self.regular_user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {str(token.access_token)}")
+        response = self.client.delete(
+            reverse_lazy("category-detail", kwargs={"pk": self.category.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
