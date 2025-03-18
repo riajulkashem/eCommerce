@@ -22,7 +22,7 @@ class ProductViewSetTestCase(APITestCase):
             name="Test Category", created_by_id=self.staff_user.id
         )
         self.product_data = {
-            "name": "Test Product",
+            "name": "Test Product 1",
             "description": "Test Description",
             "price": 100,
             "category": self.category,
@@ -155,9 +155,8 @@ class StockViewSetTestCase(APITestCase):
             price=100,
             category=category,
         )
-        self.stock = Stock.objects.create(
-            location="Test Location", quantity=10, product=self.product
-        )
+
+        self.stock = self.product.stock
 
         # Create a test user for authenticated tests
         self.token = RefreshToken.for_user(self.staff_user)
@@ -167,20 +166,14 @@ class StockViewSetTestCase(APITestCase):
         response = self.client.get(reverse_lazy("stock-list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_stock_create_as_staff(self):
+    def test_stock_create_is_disabled(self):
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
-        category = Category.objects.create(name="New Category")
-        product = Product.objects.create(
-            name="New Product",
-            price=100,
-            category=category,
-        )
         response = self.client.post(
             reverse_lazy("stock-list"),
-            data=json.dumps({"location": "New Location", "product": product.id}),
+            data={"location": "New Location"},
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_stock_update_as_staff(self):
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")

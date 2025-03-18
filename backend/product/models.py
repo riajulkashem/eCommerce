@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from user.models import EcommerceUser
 
@@ -22,7 +24,7 @@ class Category(TimeStampedModel):
 
 
 class Product(TimeStampedModel):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     price = models.FloatField()
     image = models.ImageField(upload_to="products/", null=True, blank=True)
     description = models.TextField(blank=True, null=True)
@@ -43,3 +45,9 @@ class Stock(TimeStampedModel):
 
     def __str__(self):
         return f"{self.product.name} - {self.quantity} in stock"
+
+# Create Stock Automatically On Create New Products
+@receiver(post_save, sender=Product)
+def create_stock(sender, instance, created, **kwargs):
+    if created:
+        Stock.objects.create(product=instance)
