@@ -8,6 +8,7 @@ class EcommerceBaseSerializer(serializers.ModelSerializer):
         abstract = True
 
     def create(self, validated_data):
+        """Add requested user as creator to the object"""
         instance = super().create(validated_data)
         user = self.context["request"].user
         instance.created_by = user
