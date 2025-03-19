@@ -1,8 +1,11 @@
+import {SiteHeader} from "@/components/SiteHeader";
 
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
+
+      <SiteHeader />
       {/* Hero Section */}
       <div className="relative overflow-hidden ">
         {/* Decorative background elements */}
