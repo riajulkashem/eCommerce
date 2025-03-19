@@ -333,7 +333,7 @@ Temporary Items
 
 ### NextJS ###
 # dependencies
-*/node_modules/*
+**/node_modules/**
 /.pnp
 .pnp.js
 
@@ -341,7 +341,7 @@ Temporary Items
 /coverage
 
 # next.js
-/.next/
+**/.next/**
 /out/
 
 # production
