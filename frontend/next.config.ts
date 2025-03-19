@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
         dangerouslyAllowSVG: true,
         remotePatterns: [
             {
-                protocol: "https",
-                hostname: "placehold.co",
+                protocol: "http",
+                hostname: "localhost",
             },
         ],
     },

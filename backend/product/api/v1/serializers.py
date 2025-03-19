@@ -17,9 +17,13 @@ class EcommerceBaseSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(EcommerceBaseSerializer):
+    category_name = serializers.SerializerMethodField()
     class Meta:
         model = Product
-        fields = ["name", "price", "image", "description", "category"]
+        fields = ["name", "price", "image", "description", "category_name"]
+
+    def get_category_name(self, obj):
+        return obj.category.name
 
 
 class CategorySerializer(EcommerceBaseSerializer):
