@@ -3,12 +3,10 @@
 import {useState, useEffect} from "react"
 import Image from "next/image"
 import Link from "next/link"
-import {useSearchParams} from "next/navigation"
 import {Badge} from "@/components/ui/badge"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardFooter, CardHeader} from "@/components/ui/card"
-import {Heart, ShoppingCart, Star} from "lucide-react"
-import ProductListSkeleton from "@/components/Skeletons/ProductListSkeleton";
+import {ShoppingCart} from "lucide-react"
 
 interface  Product {
     id: number
@@ -22,32 +20,24 @@ interface  Product {
 
 export default function ProductList() {
     const [products, setProducts] = useState<Product[]>();
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+
 
     useEffect(() => {
         const fetchProducts = async () => {
-            try {
-                setLoading(true);
+
                 const response = await fetch('http://localhost:8000/api/v1/product/');
                 if (!response.ok) {
                     throw new Error('Failed to fetch products');
                 }
                 const data:Product[] = await response.json();
-                setProducts(data);
-            } catch (err:any) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
+                return data;
         };
-
-        fetchProducts();
+        fetchProducts().then(response => setProducts(response));
     }, []);
 
     return (
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {products?.length ? products.map((product, index) => (
+            {products?.map((product, index) => (
                 <Card key={index + 1}
                     className="py-0 group overflow-hidden rounded-xl border border-border/40 bg-card transition-all duration-300 hover:border-primary/20 hover:shadow-lg dark:border-border/20 dark:hover:border-primary/10"
                 >
@@ -107,7 +97,7 @@ export default function ProductList() {
                         </div>
                     </CardFooter>
                 </Card>
-            )): ProductListSkeleton()}
+            ))}
         </div>
     )
 }
