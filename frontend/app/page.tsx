@@ -56,10 +56,6 @@ export default function Home() {
           <div className="absolute -right-64 top-32 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl dark:bg-blue-500/3" />
           <div className="absolute -left-64 top-96 h-96 w-96 rounded-full bg-pink-500/5 blur-3xl dark:bg-pink-500/3" />
 
-          {/* Search and Filter */}
-          <div className="relative z-10">
-
-          </div>
 
           {/* Product List */}
           <div className="relative z-10">

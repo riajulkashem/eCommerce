@@ -33,8 +33,8 @@ export default function AdminProductList() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {products?.map((product) => (
-                            <TableRow key={product.id}>
+                        {products?.map((product, index) => (
+                            <TableRow key={index }>
                                 <TableCell>
                                     <div className="flex items-center gap-3">
                                         <Image
