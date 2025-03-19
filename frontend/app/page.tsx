@@ -1,14 +1,16 @@
-import {SiteHeader} from "@/components/SiteHeader";
+"use client"
+
 import {Suspense} from "react";
 import ProductListSkeleton from "@/components/Skeletons/ProductListSkeleton";
 import ProductList from "@/components/ProductList";
+import NavBar from "@/components/NavBar";
 
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
 
-      <SiteHeader />
+      <NavBar />
       {/* Hero Section */}
       <div className="relative overflow-hidden ">
         {/* Decorative background elements */}

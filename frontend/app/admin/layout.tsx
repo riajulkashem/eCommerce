@@ -1,5 +1,6 @@
 import type React from "react"
-import AdminNavbar from "@/components/admin/AdminNavBar";
+import NavBar from "@/components/NavBar";
+
 
 export default function AdminLayout({
   children,
@@ -8,7 +9,7 @@ export default function AdminLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <AdminNavbar />
+      <NavBar />
       <main className="flex-1">{children}</main>
     </div>
   )
