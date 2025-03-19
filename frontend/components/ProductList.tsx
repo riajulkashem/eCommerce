@@ -54,7 +54,7 @@ export default function ProductList() {
                             </Link>
                         </div>
                     </CardHeader>
-                    <CardContent className="px-4">
+                    <CardContent className="px-4 pb-4">
                         <Link href={`/products/${product.id}`}>
                             <div className="mb-2 flex items-start justify-between">
                                 <div>
@@ -68,34 +68,6 @@ export default function ProductList() {
                             <p className="mt-3 text-lg font-bold text-primary">${product.price.toFixed(2)}</p>
                         </Link>
                     </CardContent>
-                    <CardFooter className="border-t bg-muted/30 p-4 dark:bg-muted/10">
-                        <div className="flex w-full gap-2">
-                            <Button
-                                className="flex-1 bg-gradient-to-r from-primary to-primary/90 transition-all hover:from-primary/90 hover:to-primary">
-                                <ShoppingCart className="mr-2 h-4 w-4"/>
-                                Add to Cart
-                            </Button>
-                            <Button variant="outline" size="icon" asChild>
-                                <Link href={`/products/${product.id}`}>
-                                    <span className="sr-only">View details</span>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M5 12h14"></path>
-                                        <path d="m12 5 7 7-7 7"></path>
-                                    </svg>
-                                </Link>
-                            </Button>
-                        </div>
-                    </CardFooter>
                 </Card>
             ))}
         </div>
