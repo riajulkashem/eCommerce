@@ -1,8 +1,14 @@
+import {SiteHeader} from "@/components/SiteHeader";
+import {Suspense} from "react";
+import ProductListSkeleton from "@/components/Skeletons/ProductListSkeleton";
+import ProductList from "@/components/ProductList";
 
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
+
+      <SiteHeader />
       {/* Hero Section */}
       <div className="relative overflow-hidden ">
         {/* Decorative background elements */}
@@ -41,6 +47,26 @@ export default function Home() {
           <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="h-12 w-full fill-background md:h-16">
             <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V0C0,0,0,0,0,0z" />
           </svg>
+        </div>
+      </div>
+
+      <div id="products" className="container px-4 py-8 mx-auto">
+        <div className="relative">
+          {/* Decorative background elements */}
+          <div className="absolute -right-64 top-32 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl dark:bg-blue-500/3" />
+          <div className="absolute -left-64 top-96 h-96 w-96 rounded-full bg-pink-500/5 blur-3xl dark:bg-pink-500/3" />
+
+          {/* Search and Filter */}
+          <div className="relative z-10">
+
+          </div>
+
+          {/* Product List */}
+          <div className="relative z-10">
+            <Suspense fallback={<ProductListSkeleton />}>
+              <ProductList />
+            </Suspense>
+          </div>
         </div>
       </div>
     </div>
