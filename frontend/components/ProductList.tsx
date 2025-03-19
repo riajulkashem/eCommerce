@@ -4,34 +4,16 @@ import {useState, useEffect} from "react"
 import Image from "next/image"
 import Link from "next/link"
 import {Badge} from "@/components/ui/badge"
-import {Button} from "@/components/ui/button"
-import {Card, CardContent, CardFooter, CardHeader} from "@/components/ui/card"
-import {ShoppingCart} from "lucide-react"
+import {Card, CardContent, CardHeader} from "@/components/ui/card"
+import {Product} from "@/lib/types";
+import {fetchProducts} from "@/lib/utils";
 
-interface  Product {
-    id: number
-    name: string
-    price: number
-    description: string
-    image: string
-    category_name: string
-}
 
 
 export default function ProductList() {
     const [products, setProducts] = useState<Product[]>();
 
-
     useEffect(() => {
-        const fetchProducts = async () => {
-
-                const response = await fetch('http://localhost:8000/api/v1/product/');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch products');
-                }
-                const data:Product[] = await response.json();
-                return data;
-        };
         fetchProducts().then(response => setProducts(response));
     }, []);
 
