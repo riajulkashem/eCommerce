@@ -43,7 +43,7 @@ export function SiteHeader() {
           </Button>
 
           <Button variant="default" size="sm" asChild className="hidden md:flex">
-            <Link href="">Sign In</Link>
+            <Link href="/auth/login">Sign In</Link>
           </Button>
         </div>
       </div>
