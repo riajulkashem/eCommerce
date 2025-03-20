@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from user.models import EcommerceUser
 
@@ -6,8 +7,14 @@ from user.models import EcommerceUser
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = EcommerceUser
-        fields = ["first_name", "last_name", "phone", "email", "is_staff", "is_active"]
-        read_only_fields = ["is_staff", "is_active", "email"]
+        fields = ["first_name", "last_name", "phone", "email", "is_staff"]
+        read_only_fields = ["is_staff", "email"]
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EcommerceUser
+        fields = ["first_name", "last_name", "phone", "email", "address"]
+        read_only_fields = ["email"]
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -42,3 +49,13 @@ class PasswordChangeSerializer(serializers.Serializer):
         user = self.context["request"].user
         user.set_password(self.validated_data["new_password"])
         user.save()
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    def validate(self, attrs):
+        # Call the parent validate method to authenticate and get tokens
+        data = super().validate(attrs)
+        # Get the authenticated user
+        user = self.user
+        data['user'] = UserSerializer(user).data
+        return data

@@ -1,14 +1,16 @@
-import {SiteHeader} from "@/components/SiteHeader";
+"use client"
+
 import {Suspense} from "react";
 import ProductListSkeleton from "@/components/Skeletons/ProductListSkeleton";
 import ProductList from "@/components/ProductList";
+import NavBar from "@/components/NavBar";
 
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
 
-      <SiteHeader />
+      <NavBar />
       {/* Hero Section */}
       <div className="relative overflow-hidden ">
         {/* Decorative background elements */}
@@ -56,10 +58,6 @@ export default function Home() {
           <div className="absolute -right-64 top-32 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl dark:bg-blue-500/3" />
           <div className="absolute -left-64 top-96 h-96 w-96 rounded-full bg-pink-500/5 blur-3xl dark:bg-pink-500/3" />
 
-          {/* Search and Filter */}
-          <div className="relative z-10">
-
-          </div>
 
           {/* Product List */}
           <div className="relative z-10">
