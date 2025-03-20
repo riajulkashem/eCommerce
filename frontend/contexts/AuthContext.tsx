@@ -1,7 +1,7 @@
 'use client';
 
 import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
-import {getUser, login, logout, refreshAccessToken, verifyToken} from '@/lib/auth';
+import {getUser, login, logout, refreshAccessToken, register, verifyToken} from '@/lib/auth';
 import {CommonErrorResponse, CommonSuccessResponse, LoginSuccessResponse, User} from "@/lib/types";
 import {storeToken} from "@/lib/cookie-utils";
 import {usePathname, useRouter} from "next/navigation";
@@ -68,12 +68,11 @@ export function AuthProvider({children}: { children: ReactNode }) {
         email: string,
         password: string
     ) => {
-        return fetch('http://localhost:8000/api/v1/user/register/', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            credentials: 'same-origin',
-            body: JSON.stringify({first_name, last_name, email, password}),
-        })
+        const response: any = await register(first_name, last_name, email, password)
+        if (response.ok) {
+            toast.success('You have successfully registered your account!');
+            router.push('/auth/login');
+        }
     };
 
     const logoutUser = async () => {

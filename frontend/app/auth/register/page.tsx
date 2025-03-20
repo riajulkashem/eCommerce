@@ -28,25 +28,16 @@ export default function RegisterPage() {
         setFormData((prev) => ({...prev, [name]: value}))
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (formData.password !== "" && formData.password === formData.confirmPassword) {
-            const result = registerUser(
+        if (formData.password === formData.confirmPassword) {
+            await registerUser(
                 formData.first_name,
                 formData.last_name,
                 formData.email,
                 formData.password,
             )
-            result.then((data) => {
-                console.log(data)
-                if (data.ok) {
-                    toast.success("Your account has been registered successfully!")
-                    router.push("/auth/login")
-                } else toast.error("Failed to register")
-            })
-
-        }
-        console.log("Register attempt with:", formData)
+        } else toast.error("Passwords don't match")
     }
 
     return (

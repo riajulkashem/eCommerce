@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
-from user.api.v1.views import UserViewSet, CustomTokenObtainPairView, LogoutView
+from user.api.v1.views import UserViewSet, CustomTokenObtainPairView, LogoutView, RegistrationView
 
 router = DefaultRouter()
 router.register(
@@ -14,8 +14,9 @@ router.register(
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("user/login/", CustomTokenObtainPairView.as_view(), name="login"),
-    path("user/logout/", LogoutView.as_view(), name="logout"),
-    path("user/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("user/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path("auth/login/", CustomTokenObtainPairView.as_view(), name="login"),
+    path("auth/login/", RegistrationView.as_view(), name="register"),
+    path("auth/logout/", LogoutView.as_view(), name="logout"),
+    path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("auth/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
 ]

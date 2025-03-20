@@ -10,7 +10,7 @@ export default function AdminLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <NavBar />
-      <main className="flex-1">{children}</main>
+      <div className="flex-1">{children}</div>
     </div>
   )
 }
