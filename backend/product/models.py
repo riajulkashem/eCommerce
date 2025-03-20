@@ -53,10 +53,8 @@ def create_stock(sender, instance, created, **kwargs):
     if created:
         Stock.objects.create(product=instance)
 
-# Prevent deletion product if stock available
+# delete stock associated with the product
 @receiver(pre_delete, sender=Product)
-def delete_stock(sender, instance, created, **kwargs):
-    if instance.stock.quantity > 0:
-        raise Exception("The product has stock available")
+def delete_stock(sender, instance, **kwargs):
     instance.stock.delete()
 
