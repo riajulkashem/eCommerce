@@ -5,7 +5,7 @@ import { getToken } from "@/utilities/cookie-utils";
 import { Product, Category, Stock } from "@/utilities/types";
 import {
   CATEGORIES_API_BASE_URL,
-  CATEGORIES_ERROR_MESSAGES,
+  CATEGORIES_ERROR_MESSAGES, PRODUCT_API_BASE_URL,
   STOCK_API_BASE_URL,
   STOCK_ERROR_MESSAGES,
 } from "@/utilities/contstants";
@@ -49,7 +49,7 @@ export const fetchStock = async (): Promise<Stock[]> => {
  * @throws Error if the fetch request fails, with a toast notification.
  */
 export const fetchProducts = async (): Promise<Product[]> => {
-  const response = await fetch("http://localhost:8000/api/v1/products/product/", {
+  const response = await fetch(PRODUCT_API_BASE_URL, {
     cache: "no-cache",
   });
   if (!response.ok) {
