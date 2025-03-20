@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
 from user.models import EcommerceUser
@@ -52,3 +52,11 @@ class Stock(TimeStampedModel):
 def create_stock(sender, instance, created, **kwargs):
     if created:
         Stock.objects.create(product=instance)
+
+# Prevent deletion product if stock available
+@receiver(pre_delete, sender=Product)
+def delete_stock(sender, instance, created, **kwargs):
+    if instance.stock.quantity > 0:
+        raise Exception("The product has stock available")
+    instance.stock.delete()
+
