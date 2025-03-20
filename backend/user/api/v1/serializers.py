@@ -10,6 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["first_name", "last_name", "phone", "email", "is_staff"]
         read_only_fields = ["is_staff", "email"]
 
+
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = EcommerceUser
@@ -50,12 +51,12 @@ class PasswordChangeSerializer(serializers.Serializer):
         user.set_password(self.validated_data["new_password"])
         user.save()
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         # Call the parent validate method to authenticate and get tokens
         data = super().validate(attrs)
         # Get the authenticated user
         user = self.user
-        data['user'] = UserSerializer(user).data
+        data["user"] = UserSerializer(user).data
         return data

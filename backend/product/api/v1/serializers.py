@@ -18,7 +18,9 @@ class EcommerceBaseSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(EcommerceBaseSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
-    image = serializers.ImageField(max_length=None, use_url=True, allow_null=True, required=False)
+    image = serializers.ImageField(
+        max_length=None, use_url=True, allow_null=True, required=False
+    )
 
     class Meta:
         model = Product
@@ -26,10 +28,11 @@ class ProductSerializer(EcommerceBaseSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["category_name"] = instance.category.name if instance.category else None
+        representation["category_name"] = (
+            instance.category.name if instance.category else None
+        )
         representation["stock"] = instance.stock.quantity if instance.stock else 0
         return representation
-
 
 
 class CategorySerializer(EcommerceBaseSerializer):

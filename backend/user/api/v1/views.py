@@ -1,6 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import viewsets, permissions, status
-from rest_framework.decorators import action
+from rest_framework import permissions, status
 from rest_framework.generics import RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -12,7 +11,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from user.api.v1.serializers import (
     RegistrationSerializer,
     UserSerializer,
-    PasswordChangeSerializer, CustomTokenObtainPairSerializer, UserProfileSerializer,
+    PasswordChangeSerializer,
+    CustomTokenObtainPairSerializer,
+    UserProfileSerializer,
 )
 
 
@@ -35,10 +36,14 @@ class PasswordChangeView(APIView):
     serializer_class = PasswordChangeSerializer
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data, context={"request": request})
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Password changed successfully"}, status=status.HTTP_200_OK
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -48,6 +53,7 @@ class UserDetailView(RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
 
 class UserProfileView(RetrieveUpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)

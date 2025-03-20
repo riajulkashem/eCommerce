@@ -6,6 +6,11 @@ from user.models import EcommerceUser
 
 
 class TimeStampedModel(models.Model):
+    """
+    Abstract model that provides timestamped created,
+    updated and the creator
+    """
+
     created_by = models.ForeignKey(
         EcommerceUser, on_delete=models.CASCADE, null=True, blank=True
     )
@@ -53,8 +58,8 @@ def create_stock(sender, instance, created, **kwargs):
     if created:
         Stock.objects.create(product=instance)
 
+
 # delete stock associated with the product
 @receiver(pre_delete, sender=Product)
 def delete_stock(sender, instance, **kwargs):
     instance.stock.delete()
-
