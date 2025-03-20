@@ -1,109 +1,73 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
+import { useStockData } from "@/lib/hooks/useStockData";
+import { Stock } from "@/lib/types";
+import {useCallback, useState} from "react";
+import {STOCK_API_BASE_URL, STOCK_ERROR_MESSAGES} from "@/lib/contstants";
 import { toast } from "sonner";
 import { protectedPutFetch } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Edit } from "lucide-react";
+import showToastErrors from "@/components/ToastErrors";
+import {Button} from "@/components/ui/button";
+import {Edit} from "lucide-react";
+import AdminProductListSkeleton from "@/components/Skeletons/AdminProductListSkeleton";
 import TableComponent from "@/components/Table";
 import CustomDialog from "@/components/admin/CustomDialog";
-import AdminProductListSkeleton from "@/components/Skeletons/AdminProductListSkeleton";
-
-interface Stock {
-  id: number;
-  quantity: number;
-  location: string;
-  product: number; // Product ID
-  product_name?: string; // Optional, if serializer includes product details
-}
-
-const fetchStock = async (): Promise<Stock[]> => {
-  const response = await fetch("http://127.0.0.1:8000/api/v1/products/stock/", {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "same-origin",
-  });
-  if (!response.ok) throw new Error("Failed to fetch stock");
-  return response.json();
-};
+import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
 
 export default function AdminStockList() {
-  const [stockItems, setStockItems] = useState<Stock[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { stockItems, isLoading, setStockItems } = useStockData();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [stockToEdit, setStockToEdit] = useState<Stock | null>(null);
   const [editQuantity, setEditQuantity] = useState("");
   const [editLocation, setEditLocation] = useState("");
-  const [editError, setEditError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadStock = async () => {
-      try {
-        setIsLoading(true);
-        const data = await fetchStock();
-        setStockItems(data);
-      } catch (error) {
-        console.error("Error fetching stock:", error);
-        toast.error("Failed to load stock");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadStock();
+  const openEditModal = useCallback((stock: Stock) => {
+    setStockToEdit(stock);
+    setEditQuantity(stock.quantity.toString());
+    setEditLocation(stock.location ?? "");
+    setEditDialogOpen(true);
   }, []);
 
-  const openEditModal = (stock: Stock) => {
-    setStockToEdit(stock);
-    setEditQuantity(stock.quantity.toString()); // quantity is a number, so this is fine
-    setEditLocation(stock.location ?? ""); // Default to empty string if null/undefined
-    setEditError(null);
-    setEditDialogOpen(true);
-  };
-
-  const handleEditSubmit = async () => {
+  const handleEditSubmit = useCallback(async () => {
     if (!editQuantity.trim() || isNaN(Number(editQuantity)) || Number(editQuantity) < 0) {
-      setEditError("Please enter a valid non-negative quantity");
+      toast.error(STOCK_ERROR_MESSAGES.quantityInvalid);
       return;
     }
     if (!editLocation.trim()) {
-      setEditError("Location is required");
+      toast.error(STOCK_ERROR_MESSAGES.locationRequired);
       return;
     }
 
-    if (stockToEdit) {
-      try {
-        const response = await protectedPutFetch(
-          `http://127.0.0.1:8000/api/v1/products/stock/${stockToEdit.id}/`,
-          {
-            quantity: Number(editQuantity),
-            location: editLocation
-          }
-        );
-        if (!response.ok) {
-          const errorObject = await response.json();
-          toast.error(errorObject.message || "Failed to update stock");
-          return;
-        }
+    if (!stockToEdit) return;
 
-        toast.success("Stock updated successfully");
-        setStockItems((prevStock) =>
-          prevStock.map((stock) =>
-            stock.id === stockToEdit.id
-              ? { ...stock, quantity: Number(editQuantity), location: editLocation }
-              : stock
-          )
-        );
-        setEditDialogOpen(false);
-        setStockToEdit(null);
-      } catch (error) {
-        console.error("Error updating stock:", error);
-        toast.error(`Failed to update stock: ${error instanceof Error ? error.message : "Unknown error"}`);
+    try {
+      const response = await protectedPutFetch(`${STOCK_API_BASE_URL}${stockToEdit.id}/`, {
+        quantity: Number(editQuantity),
+        location: editLocation,
+      });
+      if (!response.ok) {
+        const errorObject = await response.json();
+        showToastErrors(errorObject);
+        return;
       }
+
+      toast.success("Stock updated successfully");
+      setStockItems((prev) =>
+        prev.map((stock) =>
+          stock.id === stockToEdit.id
+            ? { ...stock, quantity: Number(editQuantity), location: editLocation }
+            : stock
+        )
+      );
+      setEditDialogOpen(false);
+      setStockToEdit(null);
+    } catch (error) {
+      console.error("Error updating stock:", error);
+      toast.error(STOCK_ERROR_MESSAGES.update);
     }
-  };
+  }, [editQuantity, editLocation, stockToEdit, setStockItems]);
+
   const tableHeadings = [
     {
       key: "product",
@@ -130,7 +94,7 @@ export default function AdminStockList() {
 
   if (isLoading) return <AdminProductListSkeleton />;
 
- return (
+  return (
     <>
       <TableComponent headings={tableHeadings} data={stockItems} />
       <CustomDialog
@@ -148,10 +112,7 @@ export default function AdminStockList() {
               id="editQuantity"
               type="number"
               value={editQuantity}
-              onChange={(e) => {
-                setEditQuantity(e.target.value);
-                if (editError) setEditError(null);
-              }}
+              onChange={(e) => setEditQuantity(e.target.value)}
               placeholder="Enter stock quantity"
               min="0"
             />
@@ -161,14 +122,10 @@ export default function AdminStockList() {
             <Input
               id="editLocation"
               value={editLocation}
-              onChange={(e) => {
-                setEditLocation(e.target.value);
-                if (editError) setEditError(null);
-              }}
+              onChange={(e) => setEditLocation(e.target.value)}
               placeholder="Enter stock location"
             />
           </div>
-          {editError && <p className="text-sm text-destructive">{editError}</p>}
         </div>
       </CustomDialog>
     </>

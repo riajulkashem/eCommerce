@@ -1,116 +1,77 @@
-"use client";
-
-import React, { useState } from "react";
+import {ProductFormProps} from "@/lib/types";
+import {PRODUCT_API_BASE_URL} from "@/lib/contstants";
+import {protectedPostFetch, protectedPutFetch } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { protectedPostFetch, protectedPutFetch } from "@/lib/utils";
+import { useProductForm } from "@/lib/hooks/useProductForm";
+import {useCallback, useState} from "react";
+import {validateProductFormData} from "@/lib/formValidationUtilities";
+import {toast} from "sonner";
+import {CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {Textarea} from "@/components/ui/textarea";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import Link from "next/link";
-import {Category, ProductFormData} from "@/lib/types";
+import {Button} from "@/components/ui/button";
 
-interface ProductFormProps {
-  initialData?: Partial<ProductFormData> & { image?: string };  // Allow string for edit mode
-  categories: Category[];
-  isEditMode: boolean;
-  productId?: string;
-}
-
-const ProductForm: React.FC<ProductFormProps> = ({ initialData, categories, isEditMode, productId }) => {
+export const ProductForm: React.FC<ProductFormProps> = ({
+  initialData,
+  categories,
+  isEditMode,
+  productId,
+}) => {
   const router = useRouter();
-  const [formData, setFormData] = useState<ProductFormData>({
-    name: initialData?.name || "",
-    description: initialData?.description || "",
-    price: initialData?.price || "",
-    category: initialData?.category || "",
-    image: null,  // File starts as null, not a string
-  });
-  const [existingImageUrl, setExistingImageUrl] = useState<string | undefined>(initialData?.image);  // For edit mode
-  const [errors, setErrors] = useState<Partial<Record<keyof ProductFormData, string>>>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const { formData, errors, isLoading, setErrors, setIsLoading, updateField } =
+    useProductForm(initialData);
+  const [existingImageUrl] = useState<string | undefined>(initialData?.image);
 
-  const validateForm = (): boolean => {
-    const newErrors: Partial<Record<keyof ProductFormData, string>> = {};
-    if (!formData.name.trim()) newErrors.name = "Product name is required";
-    if (!formData.description.trim()) newErrors.description = "Description is required";
-    if (!formData.price) {
-      newErrors.price = "Price is required";
-    } else if (isNaN(Number(formData.price)) || Number(formData.price) < 0) {
-      newErrors.price = "Price must be a positive number";
-    }
-    if (!formData.category) newErrors.category = "Category is required";
-    if (!isEditMode && !formData.image) newErrors.image = "Image is required";  // Only required for create
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      const validationErrors = validateProductFormData(formData, isEditMode);
+      setErrors(validationErrors);
+      if (Object.keys(validationErrors).length > 0) return;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name as keyof ProductFormData]) setErrors(prev => ({ ...prev, [name]: undefined }));
-  };
+      setIsLoading(true);
+      try {
+        const url = isEditMode ? `${PRODUCT_API_BASE_URL}${productId}/` : PRODUCT_API_BASE_URL;
+        const method = isEditMode ? protectedPutFetch : protectedPostFetch;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setFormData(prev => ({ ...prev, image: file }));
-    if (errors.image) setErrors(prev => ({ ...prev, image: undefined }));
-  };
+        const formDataToSend = new FormData();
+        formDataToSend.append("name", formData.name);
+        formDataToSend.append("description", formData.description);
+        formDataToSend.append("price", String(Number(formData.price)));
+        formDataToSend.append("category", String(Number(formData.category)));
+        if (formData.image) formDataToSend.append("image", formData.image);
 
-  const handleSelectChange = (value: string) => {
-    setFormData(prev => ({ ...prev, category: value }));
-    if (errors.category) setErrors(prev => ({ ...prev, category: undefined }));
-  };
+        const response = await method(url, formDataToSend);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || response.statusText);
+        }
 
-    setIsLoading(true);
-    try {
-      const url = isEditMode
-        ? `http://127.0.0.1:8000/api/v1/products/product/${productId}/`
-        : "http://127.0.0.1:8000/api/v1/products/product/";
-      const method = isEditMode ? protectedPutFetch : protectedPostFetch;
-
-      const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("price", String(Number(formData.price)));
-      formDataToSend.append("category", String(Number(formData.category)));
-      if (formData.image) formDataToSend.append("image", formData.image);
-
-      const response = await method(url, formDataToSend);
-
-
-      if (response.ok) {
         toast.success(`Product ${isEditMode ? "updated" : "created"}`, {
           description: `The product has been successfully ${isEditMode ? "updated" : "created"}.`,
         });
         router.push("/admin");
-      } else {
-        toast.warning(response.statusText);
-        await response.json()
-        console.log("response ", response);
+      } catch (error) {
+        console.error(`Error ${isEditMode ? "updating" : "creating"} product:`, error);
+        toast.error(`Failed to ${isEditMode ? "update" : "create"} product`);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error(`Error ${isEditMode ? "updating" : "creating"} product:`, error);
-      toast.error(`Failed to ${isEditMode ? "update" : "create"} product`);
-    } finally {
-      setIsLoading(false);
-
-    }
-
-  };
+    },
+    [formData, isEditMode, productId, router, setErrors, setIsLoading]
+  );
 
   return (
     <form onSubmit={handleSubmit}>
-      <CardHeader>
+      <CardHeader className="mb-10">
         <CardTitle>Product Information</CardTitle>
-        <CardDescription>Enter the details of your {isEditMode ? "existing" : "new"} product.</CardDescription>
+        <CardDescription>
+          Enter the details of your {isEditMode ? "existing" : "new"} product.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -120,9 +81,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, categories, isEd
               id="name"
               name="name"
               value={formData.name}
-              onChange={handleChange}
-              required
+              onChange={(e) => updateField("name", e.target.value)}
               disabled={isLoading}
+              required
             />
             {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
           </div>
@@ -135,9 +96,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, categories, isEd
               step="0.01"
               min="0"
               value={formData.price}
-              onChange={handleChange}
-              required
+              onChange={(e) => updateField("price", e.target.value)}
               disabled={isLoading}
+              required
             />
             {errors.price && <p className="text-sm text-destructive">{errors.price}</p>}
           </div>
@@ -148,21 +109,23 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, categories, isEd
             id="description"
             name="description"
             value={formData.description}
-            onChange={handleChange}
+            onChange={(e) => updateField("description", e.target.value)}
             rows={4}
-            required
             disabled={isLoading}
+            required
           />
-          {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
+          {errors.description && (
+            <p className="text-sm text-destructive">{errors.description}</p>
+          )}
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
             <Select
               value={formData.category}
-              onValueChange={handleSelectChange}
-              required
+              onValueChange={(value) => updateField("category", value)}
               disabled={isLoading || !categories.length}
+              required
             >
               <SelectTrigger id="category">
                 <SelectValue placeholder="Select category" />
@@ -175,7 +138,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, categories, isEd
                 ))}
               </SelectContent>
             </Select>
-            {errors.category && <p className="text-sm text-destructive">{errors.category}</p>}
+            {errors.category && (
+              <p className="text-sm text-destructive">{errors.category}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="image">Product Image</Label>
@@ -186,16 +151,16 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, categories, isEd
               id="image"
               name="image"
               type="file"
-              accept="image/*"  // Restrict to image files
-              onChange={handleFileChange}
-              required={!isEditMode}  // Only required for create
+              accept="image/*"
+              onChange={(e) => updateField("image", e.target.files?.[0] || null)}
               disabled={isLoading}
+              required={!isEditMode}
             />
             {errors.image && <p className="text-sm text-destructive">{errors.image}</p>}
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-between mt-5">
         <Button variant="outline" asChild disabled={isLoading}>
           <Link href="/admin">Cancel</Link>
         </Button>
