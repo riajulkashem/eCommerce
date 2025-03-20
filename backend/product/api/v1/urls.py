@@ -16,5 +16,5 @@ router.register(
 )  # endpoints [stock-list, stock-detail]
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("products/", include(router.urls)),
 ]

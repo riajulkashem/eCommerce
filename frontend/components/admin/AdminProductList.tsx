@@ -1,83 +1,134 @@
-"use client"
+"use client";
 
-import {useEffect, useState} from "react"
-import Image from "next/image"
-import Link from "next/link"
-import {Button} from "@/components/ui/button"
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu"
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table"
-import {Edit, MoreHorizontal, Trash} from "lucide-react"
-import {Product} from "@/lib/types";
-import {fetchProducts} from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { fetchProducts, protectedDeleteFetch } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import TableComponent from "@/components/Table";
+import showToastErrors from "@/components/ToastErrors";
+import AdminProductListSkeleton from "@/components/Skeletons/AdminProductListSkeleton";
 
-
-export default function AdminProductList() {
-    const [products, setProducts] = useState<Product[]>();
-
-    useEffect(() => {
-        fetchProducts().then(response => setProducts(response));
-    }, []);
-
-
-    return (
-        <>
-            <div className="rounded-md border">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Product</TableHead>
-                            <TableHead>Category</TableHead>
-                            <TableHead>Price</TableHead>
-                            <TableHead>Stock</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {products?.map((product, index) => (
-                            <TableRow key={index }>
-                                <TableCell>
-                                    <div className="flex items-center gap-3">
-                                        <Image
-                                            src={product.image || "/placeholder.svg"}
-                                            alt={product.name}
-                                            width={40}
-                                            height={40}
-                                            className="rounded-md"
-                                        />
-                                        <span className="font-medium">{product.name}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>{product.category_name}</TableCell>
-                                <TableCell>${product.price.toFixed(2)}</TableCell>
-                                <TableCell>{0}</TableCell>
-                                <TableCell className="text-right">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon">
-                                                <MoreHorizontal className="h-4 w-4"/>
-                                                <span className="sr-only">Actions</span>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem asChild>
-                                                <Link href={`/admin/products/${product.id}/edit`}>
-                                                    <Edit className="mr-2 h-4 w-4"/>
-                                                    Edit
-                                                </Link>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem className="text-destructive focus:text-destructive">
-                                                <Trash className="mr-2 h-4 w-4"/>
-                                                Delete
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
-        </>
-    )
+interface Product {
+  id: number;
+  name: string;
+  price: string;
+  description: string;
+  category_name: string;
+  image: string;
+  stock: number;
 }
 
+export default function AdminProductList() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<number | null>(null);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setIsLoading(true);
+        const data = await fetchProducts();
+        setProducts(data as Product[] | []);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        toast.error("Failed to load products");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
+
+  const confirmDelete = (id: number) => {
+    setProductToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (productToDelete) {
+      try {
+        const response = await protectedDeleteFetch(
+          `http://127.0.0.1:8000/api/v1/products/product/${productToDelete}/`
+        );
+        if (!response.ok) {
+          const errorObject = await response.json();
+          showToastErrors(errorObject);
+        }
+
+        toast.success("Product deleted successfully");
+        setProducts((prevProducts) => prevProducts.filter((product) => product.id !== productToDelete));
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        toast.error(`Failed to delete product: ${error instanceof Error ? error.message : "Unknown error"}`);
+      } finally {
+        setDeleteDialogOpen(false);
+        setProductToDelete(null);
+      }
+    }
+  };
+
+  const tableHeadings = [
+    {
+      key: "product",
+      label: "Product",
+      render: (_: any, item: Product) => (
+        <div className="flex items-center gap-3">
+          <Image
+            src={item.image || "/placeholder.svg"}
+            alt={item.name}
+            width={40}
+            height={40}
+            className="rounded-md"
+          />
+          <span className="font-medium">{item.name}</span>
+        </div>
+      ),
+    },
+    { key: "category_name", label: "Category" },
+    { key: "price", label: "Price", render: (value: string) => `$${value}` },
+    { key: "stock", label: "Stock", render: (value: number) => `$${value}` }, // Hardcoded as 0 per your example
+    { key: "actions", label: "Actions" },
+  ];
+
+  if (isLoading) return <AdminProductListSkeleton />
+
+  return (
+    <>
+      <TableComponent
+        headings={tableHeadings}
+        data={products}
+        onDelete={confirmDelete}
+        getEditUrl={(id) => `/admin/product/${id}/edit`}
+      />
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this product? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}

@@ -16,7 +16,7 @@ export default function AdminDashboard() {
           <p className="text-muted-foreground">Manage your products, categories, and Stock.</p>
         </div>
         <Button asChild>
-          <Link href="/admin/products/new">
+          <Link href="/admin/product/new">
             <Plus className="mr-2 h-4 w-4" />
             Add Product
           </Link>
