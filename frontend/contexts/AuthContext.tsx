@@ -1,7 +1,7 @@
 'use client';
 
 import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
-import {getUser, login, logout, refreshAccessToken, register, verifyToken} from '@/lib/auth';
+import {getUser, login, logout, register, verifyToken} from '@/lib/auth';
 import {CommonErrorResponse, CommonSuccessResponse, LoginSuccessResponse, User} from "@/lib/types";
 import {storeToken} from "@/lib/cookie-utils";
 import {usePathname, useRouter} from "next/navigation";
@@ -28,15 +28,19 @@ export function AuthProvider({children}: { children: ReactNode }) {
     const [loading, setLoading] = useState<boolean>(true);
     const pathname = usePathname(); // Get current path
     const router = useRouter();
+    const protectedPaths = ['/user', '/profile', '/admin'];
 
     useEffect(() => {
+        console.log("AuthProvider is called");
         async function checkAuth() {
+            console.log("AuthProvider is cehckAuth is called");
             const isValid = await verifyToken();
+            console.log("AuthProvider is valid", isValid);
             if (isValid) {
+                console.log("Verifying token successfully");
                 setUser(await getUser());
-            } else if (await refreshAccessToken()) {
-                setUser(await getUser());
-            } else if (pathname.startsWith('/admin')) {
+            } else if (protectedPaths.some((path) => pathname.startsWith(path))) {
+                toast.warning('Log In To Access This Page')
                 // Redirect to login with current path if unauthorized
                 router.push(`/auth/login?redirect=${encodeURIComponent(pathname)}`);
             }

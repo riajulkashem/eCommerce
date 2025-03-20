@@ -22,7 +22,6 @@ import {toast} from "sonner";
 export default function NavBar() {
     const router = useRouter();
     const {user, logoutUser} = useAuth()
-    console.log(user)
 
     const handleLogOut = () => {
         logoutUser().then(() => {

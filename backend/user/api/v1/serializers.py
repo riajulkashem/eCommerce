@@ -10,6 +10,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["first_name", "last_name", "phone", "email", "is_staff"]
         read_only_fields = ["is_staff", "email"]
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EcommerceUser
+        fields = ["first_name", "last_name", "phone", "email", "address"]
+        read_only_fields = ["email"]
+
 
 class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,11 +57,5 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
         # Get the authenticated user
         user = self.user
-        data['user'] = {
-            "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "phone": user.phone,
-            "is_staff": user.is_staff,
-        }
+        data['user'] = UserSerializer(user).data
         return data
