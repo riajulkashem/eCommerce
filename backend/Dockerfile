@@ -21,7 +21,7 @@ RUN uv pip install -r requirements.txt --system --no-cache
 FROM python:3.13-slim
 
 RUN useradd -m -r appuser && \
-   mkdir -p /app/backend/static && \
+   mkdir -p /app/backend/static /app/backend/media &&  \
    chown -R appuser:appuser /app
 
 # Copy the Python dependencies from the builder stage
@@ -49,6 +49,7 @@ USER appuser
 EXPOSE 8000
 
 # Make entry file executable
+RUN chmod +x /app/backend/wait-for-postgres.sh
 RUN chmod +x /app/backend/entrypoint.sh
 
 # Start the application using Gunicorn
