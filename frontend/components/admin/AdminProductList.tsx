@@ -1,78 +1,52 @@
-"use client";
-
-import {useEffect, useState} from "react";
-import {toast} from "sonner";
-import {fetchProducts, protectedDeleteFetch} from "@/lib/utils";
-
-import Image from "next/image";
-import TableComponent from "@/components/Table";
-import showToastErrors from "@/components/ToastErrors";
-import AdminProductListSkeleton from "@/components/Skeletons/AdminProductListSkeleton";
-import CustomDialog from "@/components/admin/CustomDialog";
+"use client"
+import {Product} from "@/utilities/types";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {Edit, Trash} from "lucide-react";
-
-interface Product {
-    id: number;
-    name: string;
-    price: string;
-    description: string;
-    category_name: string;
-    image: string;
-    stock: number;
-}
+import {useAdminProductData} from "@/utilities/hooks/useAdminProductData";
+import {useCallback, useState} from "react";
+import {protectedDeleteFetch} from "@/utilities/fetchUtils";
+import {PRODUCT_API_BASE_URL, PRODUCT_ERROR_MESSAGES} from "@/utilities/contstants";
+import showToastErrors from "@/components/ToastErrors";
+import {toast} from "sonner";
+import TableDataSkeleton from "@/components/Skeletons/TableDataSkeleton";
+import TableComponent from "@/components/Table";
+import Image from "next/image";
+import CustomDialog from "@/components/CustomDialog";
 
 export default function AdminProductList() {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const {products, isLoading, setProducts} = useAdminProductData();
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [productToDelete, setProductToDelete] = useState<number | null>(null);
 
-    useEffect(() => {
-        const loadProducts = async () => {
-            try {
-                setIsLoading(true);
-                const data = await fetchProducts();
-                setProducts(data as Product[] | []);
-            } catch (error) {
-                console.error("Error fetching products:", error);
-                toast.error("Failed to load products");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        loadProducts();
-    }, []);
-
-    const confirmDelete = (id: number) => {
+    const confirmDelete = useCallback((id: number) => {
         setProductToDelete(id);
         setDeleteDialogOpen(true);
-    };
+    }, []);
 
-    const handleDelete = async () => {
-        if (productToDelete) {
-            try {
-                const response = await protectedDeleteFetch(
-                    `http://127.0.0.1:8000/api/v1/products/product/${productToDelete}/`
-                );
-                if (!response.ok) {
-                    const errorObject = await response.json();
-                    showToastErrors(errorObject);
-                }
+    const handleDelete = useCallback(async () => {
+        if (!productToDelete) return;
 
-                toast.success("Product deleted successfully");
-                setProducts((prevProducts) => prevProducts.filter((product) => product.id !== productToDelete));
-            } catch (error) {
-                console.error("Error deleting product:", error);
-                toast.error(`Failed to delete product: ${error instanceof Error ? error.message : "Unknown error"}`);
-            } finally {
-                setDeleteDialogOpen(false);
-                setProductToDelete(null);
+        try {
+            const response = await protectedDeleteFetch(`${PRODUCT_API_BASE_URL}${productToDelete}/`);
+            if (!response.ok) {
+                const errorObject = await response.json();
+                showToastErrors(errorObject);
+                return;
             }
+
+            toast.success("Product deleted successfully");
+            setProducts((prev) => prev.filter((product) => product.id !== productToDelete));
+        } catch (error) {
+            console.error("Error deleting product:", error);
+            toast.error(
+                `${PRODUCT_ERROR_MESSAGES.delete}: ${error instanceof Error ? error.message : "Unknown error"}`
+            );
+        } finally {
+            setDeleteDialogOpen(false);
+            setProductToDelete(null);
         }
-    };
+    }, [productToDelete, setProducts]);
 
     const tableHeadings = [
         {
@@ -93,7 +67,7 @@ export default function AdminProductList() {
         },
         {key: "category_name", label: "Category"},
         {key: "price", label: "Price", render: (value: string) => `$${value}`},
-        {key: "stock", label: "Stock", render: (value: number) => `$${value}`}, // Hardcoded as 0 per your example
+        {key: "stock", label: "Stock", render: (value: number) => `${value}`},
         {
             key: "actions",
             label: "Actions",
@@ -114,16 +88,11 @@ export default function AdminProductList() {
         },
     ];
 
-    if (isLoading) return <AdminProductListSkeleton/>
+    if (isLoading) return <TableDataSkeleton/>;
 
     return (
         <>
-            <TableComponent
-                headings={tableHeadings}
-                data={products}
-                onDelete={confirmDelete}
-                getEditUrl={(id) => `/admin/product/${id}/edit`}
-            />
+            <TableComponent headings={tableHeadings} data={products}/>
             <CustomDialog
                 open={deleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}

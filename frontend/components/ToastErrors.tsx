@@ -5,7 +5,7 @@ function showToastErrors(errorObj:any) {
     // Check if the input is an object
     if (!errorObj || typeof errorObj !== 'object') {
         toast.error("Error", {
-            description: "An unexpected error occurred."
+            description: errorObj.detail || "An unexpected error occurred."
         });
         return;
     }

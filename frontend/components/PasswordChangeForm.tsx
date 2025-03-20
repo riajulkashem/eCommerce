@@ -4,9 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { protectedPostFetch } from "@/lib/utils";
+import { protectedPostFetch } from "@/utilities/fetchUtils";
 import {PasswordFormSkeleton} from "@/components/Skeletons/PasswordChangeFormSkeleton";
-import {PasswordForm} from "@/lib/types";
+import {PasswordForm} from "@/utilities/types";
 import showToastErrors from "@/components/ToastErrors";
 
 

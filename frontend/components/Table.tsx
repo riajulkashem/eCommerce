@@ -21,7 +21,7 @@ interface TableColumn {
 interface TableComponentProps<T> {
   headings: TableColumn[];
   data: T[];
-  onDelete?: (id: string | number) => void; // Optional to support cases without onDelete
+  onDelete?: (id: string | number) => void; // Optional
   getEditUrl?: (id: string | number) => string; // Optional
 }
 

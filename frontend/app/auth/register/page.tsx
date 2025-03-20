@@ -10,7 +10,6 @@ import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 import {useAuth} from "@/contexts/AuthContext";
 import {toast} from "sonner";
-import {useRouter} from "next/navigation";
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
@@ -20,7 +19,6 @@ export default function RegisterPage() {
         password: "",
         confirmPassword: "",
     })
-    const router = useRouter()
     const {registerUser} = useAuth()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
