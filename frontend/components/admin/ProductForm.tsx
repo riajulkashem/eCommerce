@@ -85,6 +85,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, categories, isEd
 
       const response = await method(url, formDataToSend);
 
+
       if (response.ok) {
         toast.success(`Product ${isEditMode ? "updated" : "created"}`, {
           description: `The product has been successfully ${isEditMode ? "updated" : "created"}.`,
@@ -92,13 +93,17 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, categories, isEd
         router.push("/admin");
       } else {
         toast.warning(response.statusText);
+        await response.json()
+        console.log("response ", response);
       }
     } catch (error) {
       console.error(`Error ${isEditMode ? "updating" : "creating"} product:`, error);
       toast.error(`Failed to ${isEditMode ? "update" : "create"} product`);
     } finally {
       setIsLoading(false);
+
     }
+
   };
 
   return (

@@ -41,4 +41,9 @@ class CategorySerializer(EcommerceBaseSerializer):
 class StockSerializer(EcommerceBaseSerializer):
     class Meta:
         model = Stock
-        fields = ["id", "quantity", "location", "product"]
+        fields = ["id", "quantity", "location"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["product"] = instance.product.name if instance.product else None
+        return representation

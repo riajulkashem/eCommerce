@@ -31,13 +31,9 @@ export function AuthProvider({children}: { children: ReactNode }) {
     const protectedPaths = ['/user', '/profile', '/admin'];
 
     useEffect(() => {
-        console.log("AuthProvider is called");
         async function checkAuth() {
-            console.log("AuthProvider is cehckAuth is called");
             const isValid = await verifyToken();
-            console.log("AuthProvider is valid", isValid);
             if (isValid) {
-                console.log("Verifying token successfully");
                 setUser(await getUser());
             } else if (protectedPaths.some((path) => pathname.startsWith(path))) {
                 toast.warning('Log In To Access This Page')

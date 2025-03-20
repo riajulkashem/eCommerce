@@ -21,8 +21,8 @@ interface TableColumn {
 interface TableComponentProps<T> {
   headings: TableColumn[];
   data: T[];
-  onDelete: (id: string | number) => void;
-  getEditUrl: (id: string | number) => string;
+  onDelete?: (id: string | number) => void; // Optional to support cases without onDelete
+  getEditUrl?: (id: string | number) => string; // Optional
 }
 
 const TableComponent = <T extends { id: string | number }>({
@@ -31,13 +31,11 @@ const TableComponent = <T extends { id: string | number }>({
   onDelete,
   getEditUrl,
 }: TableComponentProps<T>) => {
-
   const handleDelete = (id: string | number) => {
-    onDelete(id);
-  }
+    if (onDelete) onDelete(id);
+  };
 
-
-    return (
+  return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
@@ -53,35 +51,41 @@ const TableComponent = <T extends { id: string | number }>({
           {data.map((item) => (
             <TableRow key={item.id}>
               {headings.map((heading) =>
-                heading.key === "actions" ? (
+                heading.key === "actions" && heading.render ? (
                   <TableCell key={heading.key} className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem asChild>
-                          <Link href={getEditUrl(item.id)}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDelete(item.id)}
-                          className="text-destructive focus:text-destructive"
-                        >
-                          <Trash className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    {heading.render(null, item)}
+                  </TableCell>
+                ) : heading.key === "actions" ? (
+                  <TableCell key={heading.key} className="text-right">
+                    {onDelete && getEditUrl ? (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Actions</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <Link href={getEditUrl(item.id)}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(item.id)}
+                            className="text-destructive focus:text-destructive"
+                          >
+                            <Trash className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : null}
                   </TableCell>
                 ) : (
                   <TableCell key={heading.key}>
-                      {/* @ts-ignore*/}
+                    {/* @ts-ignore */}
                     {heading.render ? heading.render(item[heading.key as keyof T], item) : item[heading.key as keyof T]}
                   </TableCell>
                 )
