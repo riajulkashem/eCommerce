@@ -4,10 +4,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { UserProfile } from "@/lib/types";
+import { UserProfile } from "@/utilities/types";
 import { toast } from "sonner";
-import { protectedPutFetch } from "@/lib/utils";
-import { getToken } from "@/lib/cookie-utils";
+import { protectedPutFetch } from "@/utilities/fetchUtils";
+import { getToken } from "@/utilities/cookie-utils";
 import {ProfileFormSkeleton} from "@/components/Skeletons/ProfileUpdateFormSkeleton";
 import showToastErrors from "@/components/ToastErrors";
 

@@ -1,18 +1,18 @@
 "use client"
-import {Product} from "@/lib/types";
+import {Product} from "@/utilities/types";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {Edit, Trash} from "lucide-react";
-import {useAdminProductData} from "@/lib/hooks/useAdminProductData";
+import {useAdminProductData} from "@/utilities/hooks/useAdminProductData";
 import {useCallback, useState} from "react";
-import {protectedDeleteFetch} from "@/lib/utils";
-import {PRODUCT_API_BASE_URL, PRODUCT_ERROR_MESSAGES} from "@/lib/contstants";
+import {protectedDeleteFetch} from "@/utilities/fetchUtils";
+import {PRODUCT_API_BASE_URL, PRODUCT_ERROR_MESSAGES} from "@/utilities/contstants";
 import showToastErrors from "@/components/ToastErrors";
 import {toast} from "sonner";
-import AdminProductListSkeleton from "@/components/Skeletons/AdminProductListSkeleton";
+import TableDataSkeleton from "@/components/Skeletons/TableDataSkeleton";
 import TableComponent from "@/components/Table";
-import CustomDialog from "@/components/admin/CustomDialog";
 import Image from "next/image";
+import CustomDialog from "@/components/CustomDialog";
 
 export default function AdminProductList() {
     const {products, isLoading, setProducts} = useAdminProductData();
@@ -67,7 +67,7 @@ export default function AdminProductList() {
         },
         {key: "category_name", label: "Category"},
         {key: "price", label: "Price", render: (value: string) => `$${value}`},
-        {key: "stock", label: "Stock", render: (value: number) => `$${value}`}, // Hardcoded as 0 per your example
+        {key: "stock", label: "Stock", render: (value: number) => `${value}`},
         {
             key: "actions",
             label: "Actions",
@@ -88,7 +88,7 @@ export default function AdminProductList() {
         },
     ];
 
-    if (isLoading) return <AdminProductListSkeleton/>;
+    if (isLoading) return <TableDataSkeleton/>;
 
     return (
         <>

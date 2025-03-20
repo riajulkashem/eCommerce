@@ -1,10 +1,10 @@
-import {ProductFormProps} from "@/lib/types";
-import {PRODUCT_API_BASE_URL} from "@/lib/contstants";
-import {protectedPostFetch, protectedPutFetch } from "@/lib/utils";
+import {ProductFormProps} from "@/utilities/types";
+import {PRODUCT_API_BASE_URL} from "@/utilities/contstants";
+import {protectedPostFetch, protectedPutFetch } from "@/utilities/fetchUtils";
 import { useRouter } from "next/navigation";
-import { useProductForm } from "@/lib/hooks/useProductForm";
+import { useProductForm } from "@/utilities/hooks/useProductForm";
 import {useCallback, useState} from "react";
-import {validateProductFormData} from "@/lib/formValidationUtilities";
+import {validateProductFormData} from "@/utilities/formValidationUtilities";
 import {toast} from "sonner";
 import {CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
@@ -48,16 +48,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || response.statusText);
+          console.log(errorData);
+          throw new Error(errorData.message || errorData.detail|| response.statusText);
         }
 
         toast.success(`Product ${isEditMode ? "updated" : "created"}`, {
           description: `The product has been successfully ${isEditMode ? "updated" : "created"}.`,
         });
         router.push("/admin");
-      } catch (error) {
-        console.error(`Error ${isEditMode ? "updating" : "creating"} product:`, error);
-        toast.error(`Failed to ${isEditMode ? "update" : "create"} product`);
+      } catch (error:any) {
+        console.error(`Error ${isEditMode ? "updating" : "creating"} product:`, error?.message || error);
+        toast.error(`Failed to ${isEditMode ? "update" : "create"} product`, {description: error?.message || error});
       } finally {
         setIsLoading(false);
       }

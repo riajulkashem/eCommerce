@@ -4,10 +4,10 @@ import {Button} from "@/components/ui/button"
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {Plus} from "lucide-react"
 import AdminProductList from "@/components/admin/AdminProductList";
-import AdminProductListSkeleton from "@/components/Skeletons/AdminProductListSkeleton";
-import AdminCategoryList from "@/components/admin/CategoryList";
-import AdminStockList from "@/components/admin/StockList";
+import TableDataSkeleton from "@/components/Skeletons/TableDataSkeleton";
 import {useRouter} from "next/navigation";
+import AdminCategoryList from "@/components/Category/CategoryList";
+import AdminStockList from "@/components/StockList";
 
 export default function AdminDashboard() {
     const [itemName, setItemName] = useState<string>('Products')
@@ -46,12 +46,12 @@ export default function AdminDashboard() {
                                  value="stock">Stock</TabsTrigger>
                 </TabsList>
                 <TabsContent value="products" className="mt-4">
-                    <Suspense fallback={<AdminProductListSkeleton/>}>
+                    <Suspense fallback={<TableDataSkeleton/>}>
                         <AdminProductList/>
                     </Suspense>
                 </TabsContent>
                 <TabsContent value="categories" className="mt-4">
-                    <Suspense fallback={<AdminProductListSkeleton/>}>
+                    <Suspense fallback={<TableDataSkeleton/>}>
                         <AdminCategoryList
                             createDialogOpen={createCategoryOpen}
                             setCreateDialogOpen={setCreateCategoryOpen}
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
                     </Suspense>
                 </TabsContent>
                 <TabsContent value="stock" className="mt-4">
-                    <Suspense fallback={<AdminProductListSkeleton/>}>
+                    <Suspense fallback={<TableDataSkeleton/>}>
                         <AdminStockList/>
                     </Suspense>
                 </TabsContent>

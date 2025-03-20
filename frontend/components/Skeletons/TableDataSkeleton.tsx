@@ -1,6 +1,6 @@
 import {Skeleton} from "@/components/ui/skeleton";
 
-export  default  function AdminProductListSkeleton() {
+export  default  function TableDataSkeleton() {
   return (
     <div className="rounded-md border">
       <div className="border-b px-4 py-5 sm:px-6">

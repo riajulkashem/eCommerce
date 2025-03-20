@@ -2,8 +2,8 @@
 
 import {Suspense} from "react";
 import ProductListSkeleton from "@/components/Skeletons/ProductListSkeleton";
-import ProductList from "@/components/ProductList";
 import NavBar from "@/components/NavBar";
+import ProductList from "@/components/Product/ProductList";
 
 
 export default function Home() {

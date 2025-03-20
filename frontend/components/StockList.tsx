@@ -1,19 +1,19 @@
 "use client"
 
-import { useStockData } from "@/lib/hooks/useStockData";
-import { Stock } from "@/lib/types";
+import { useStockData } from "@/utilities/hooks/useStockData";
+import { Stock } from "@/utilities/types";
 import {useCallback, useState} from "react";
-import {STOCK_API_BASE_URL, STOCK_ERROR_MESSAGES} from "@/lib/contstants";
+import {STOCK_API_BASE_URL, STOCK_ERROR_MESSAGES} from "@/utilities/contstants";
 import { toast } from "sonner";
-import { protectedPutFetch } from "@/lib/utils";
+import { protectedPutFetch } from "@/utilities/fetchUtils";
 import showToastErrors from "@/components/ToastErrors";
 import {Button} from "@/components/ui/button";
 import {Edit} from "lucide-react";
-import AdminProductListSkeleton from "@/components/Skeletons/AdminProductListSkeleton";
+import TableDataSkeleton from "@/components/Skeletons/TableDataSkeleton";
 import TableComponent from "@/components/Table";
-import CustomDialog from "@/components/admin/CustomDialog";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
+import CustomDialog from "@/components/CustomDialog";
 
 export default function AdminStockList() {
   const { stockItems, isLoading, setStockItems } = useStockData();
@@ -92,7 +92,7 @@ export default function AdminStockList() {
     },
   ];
 
-  if (isLoading) return <AdminProductListSkeleton />;
+  if (isLoading) return <TableDataSkeleton />;
 
   return (
     <>

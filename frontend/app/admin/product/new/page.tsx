@@ -5,9 +5,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
-import { useProductData } from "@/lib/hooks/useProductData";
+import { useProductData } from "@/utilities/hooks/useProductData";
 import {ProductFormSkeleton} from "@/components/Skeletons/ProductFormSkeleton";
-import ProductForm from "@/components/admin/ProductForm";
+import ProductForm from "@/components/Product/ProductForm";
 
 const CreateProductPage: React.FC = () => {
   const { categories, isLoading } = useProductData();

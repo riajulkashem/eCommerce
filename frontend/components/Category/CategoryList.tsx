@@ -1,18 +1,18 @@
 "use client"
 
-import {useCategories} from "@/lib/hooks/useCategoriesData";
-import {Category} from "@/lib/types";
+import {useCategories} from "@/utilities/hooks/useCategoriesData";
+import {Category} from "@/utilities/types";
 import {useCallback, useState} from "react";
-import {protectedDeleteFetch, protectedPostFetch, protectedPutFetch} from "@/lib/utils";
-import {CATEGORIES_API_BASE_URL, CATEGORIES_ERROR_MESSAGES} from "@/lib/contstants";
+import {protectedDeleteFetch, protectedPostFetch, protectedPutFetch} from "@/utilities/fetchUtils";
+import {CATEGORIES_API_BASE_URL, CATEGORIES_ERROR_MESSAGES} from "@/utilities/contstants";
 import showToastErrors from "@/components/ToastErrors";
 import {toast} from "sonner";
 import {Button} from "@/components/ui/button";
 import {Edit, Trash} from "lucide-react";
-import AdminProductListSkeleton from "@/components/Skeletons/AdminProductListSkeleton";
+import TableDataSkeleton from "@/components/Skeletons/TableDataSkeleton";
 import TableComponent from "@/components/Table";
-import CustomDialog from "@/components/admin/CustomDialog";
-import {CategoryForm} from "@/components/admin/CategoryForm";
+import CustomDialog from "@/components/CustomDialog";
+import {CategoryForm} from "@/components/Category/CategoryForm";
 
 interface AdminCategoryListProps {
     createDialogOpen: boolean;
@@ -133,7 +133,7 @@ export default function AdminCategoryList(
         },
     ];
 
-    if (isLoading) return <AdminProductListSkeleton/>;
+    if (isLoading) return <TableDataSkeleton/>;
 
     return (
         <>

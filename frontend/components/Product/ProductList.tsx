@@ -5,8 +5,8 @@ import Image from "next/image"
 import Link from "next/link"
 import {Badge} from "@/components/ui/badge"
 import {Card, CardContent, CardHeader} from "@/components/ui/card"
-import {Product} from "@/lib/types";
-import {fetchProducts} from "@/lib/utils";
+import {Product} from "@/utilities/types";
+import {fetchProducts} from "@/utilities/fetchUtils";
 
 
 
@@ -47,7 +47,7 @@ export default function ProductList() {
                                     {product.category_name}
                                 </Badge>
                             </div>
-                            <p className="mt-3 text-lg font-bold text-primary">${product.price.toFixed(2)}</p>
+                            <p className="mt-3 text-lg font-bold text-primary">${product.price}</p>
                         </Link>
                     </CardContent>
                 </Card>
