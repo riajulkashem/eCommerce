@@ -15,22 +15,14 @@ import {
 } from "lucide-react"
 import {useAuth} from "@/contexts/AuthContext";
 import {Button} from "@/components/ui/button";
-import {useRouter} from "next/navigation";
-import {toast} from "sonner";
+
 
 
 export default function NavBar() {
-    const router = useRouter();
     const {user, logoutUser} = useAuth()
 
-    const handleLogOut = () => {
-        logoutUser().then(() => {
-            router.push("/")
-            toast.success("Notice", {
-                position: "top-right",
-                description: "You have logged out",
-            })
-        })
+    const handleLogOut = async () => {
+        await logoutUser()
     }
 
     return (
