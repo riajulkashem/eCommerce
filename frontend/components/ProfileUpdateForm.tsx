@@ -10,6 +10,7 @@ import { protectedPutFetch } from "@/utilities/fetchUtils";
 import { getToken } from "@/utilities/cookie-utils";
 import {ProfileFormSkeleton} from "@/components/Skeletons/ProfileUpdateFormSkeleton";
 import showToastErrors from "@/components/ToastErrors";
+import {USER_BASE_URL} from "@/utilities/contstants";
 
 const normalizeValue = (value: string | null | undefined): string => value ?? '';
 
@@ -29,7 +30,7 @@ const ProfileUpdateForm: React.FC = () => {
       try {
         setIsLoading(true);
         const accessToken = getToken("access");
-        const response = await fetch('http://127.0.0.1:8000/api/v1/user/profile/', {
+        const response = await fetch(USER_BASE_URL + '/profile/', {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -90,7 +91,7 @@ const ProfileUpdateForm: React.FC = () => {
 
     try {
       const response = await protectedPutFetch(
-        'http://127.0.0.1:8000/api/v1/user/profile/',
+        USER_BASE_URL + '/profile/',
         profileForm
       );
       console.log(response);

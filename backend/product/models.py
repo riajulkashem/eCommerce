@@ -1,11 +1,16 @@
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
 from user.models import EcommerceUser
 
 
 class TimeStampedModel(models.Model):
+    """
+    Abstract model that provides timestamped created,
+    updated and the creator
+    """
+
     created_by = models.ForeignKey(
         EcommerceUser, on_delete=models.CASCADE, null=True, blank=True
     )
@@ -52,3 +57,9 @@ class Stock(TimeStampedModel):
 def create_stock(sender, instance, created, **kwargs):
     if created:
         Stock.objects.create(product=instance)
+
+
+# delete stock associated with the product
+@receiver(pre_delete, sender=Product)
+def delete_stock(sender, instance, **kwargs):
+    instance.stock.delete()

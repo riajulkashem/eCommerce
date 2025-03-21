@@ -27,4 +27,4 @@ RUN npm install --production  # Install only production dependencies
 EXPOSE 3000
 
 # Run the app in production mode
-CMD ["npm", "start"]
+CMD ["npm", "dev"]

@@ -1,4 +1,4 @@
-from django.urls import reverse
+from rest_framework.reverse import reverse_lazy
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from .models import EcommerceUser
@@ -23,7 +23,7 @@ class EcommerceUserAPITestCase(APITestCase):
         self.refresh_token = str(self.token)
 
     def test_register_success(self):
-        url = reverse("user-register")
+        url = reverse_lazy("register")
         new_user_data = {
             "first_name": "Jane",
             "last_name": "Smith",
@@ -40,20 +40,20 @@ class EcommerceUserAPITestCase(APITestCase):
         )
 
     def test_register_duplicate_email(self):
-        url = reverse("user-register")
+        url = reverse_lazy("register")
         response = self.client.post(url, self.user_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("email", response.data)
 
     def test_register_missing_fields(self):
-        url = reverse("user-register")
+        url = reverse_lazy("register")
         incomplete_data = {"email": "test@example.com"}  # Missing password
         response = self.client.post(url, incomplete_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("password", response.data)
 
     def test_login_success(self):
-        url = reverse("login")
+        url = reverse_lazy("login")
         login_data = {"email": "john.doe@example.com", "password": "securepassword123"}
         response = self.client.post(url, login_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -61,14 +61,14 @@ class EcommerceUserAPITestCase(APITestCase):
         self.assertIn("refresh", response.data)
 
     def test_login_invalid_credentials(self):
-        url = reverse("login")
+        url = reverse_lazy("login")
         login_data = {"email": "john.doe@example.com", "password": "wrongpassword"}
         response = self.client.post(url, login_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIn("detail", response.data)
 
     def test_password_change_success(self):
-        url = reverse("user-password-change")
+        url = reverse_lazy("password_change")
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
         response = self.client.post(
             url,
@@ -78,7 +78,7 @@ class EcommerceUserAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_password_change_invalid(self):
-        url = reverse("user-password-change")
+        url = reverse_lazy("password_change")
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
         response = self.client.post(
             url,
@@ -88,7 +88,7 @@ class EcommerceUserAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_profile_update_success(self):
-        url = reverse("user-profile")
+        url = reverse_lazy("user-profile")
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
         update_data = {
             "first_name": "Johnny",
@@ -104,26 +104,26 @@ class EcommerceUserAPITestCase(APITestCase):
         self.assertEqual(self.user.phone, "1112223333")
 
     def test_profile_update_unauthenticated(self):
-        url = reverse("user-profile")
+        url = reverse_lazy("user-profile")
         update_data = {"first_name": "Johnny"}
         response = self.client.put(url, update_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIn("detail", response.data)
 
     def test_token_validation_success(self):
-        url = reverse("token_verify")
+        url = reverse_lazy("token_verify")
         response = self.client.post(url, {"token": self.access_token}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {})  # Empty dict means valid token
 
     def test_token_validation_invalid(self):
-        url = reverse("token_verify")
+        url = reverse_lazy("token_verify")
         response = self.client.post(url, {"token": "invalidtoken123"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIn("detail", response.data)
 
     def test_token_refresh_success(self):
-        url = reverse("token_refresh")
+        url = reverse_lazy("token_refresh")
         response = self.client.post(
             url,
             {"refresh": self.refresh_token, "access": self.access_token},
@@ -132,7 +132,7 @@ class EcommerceUserAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_token_refresh_invalid(self):
-        url = reverse("token_refresh")
+        url = reverse_lazy("token_refresh")
         response = self.client.post(
             url,
             {"refresh": "invalide refressh token", "access": self.access_token},

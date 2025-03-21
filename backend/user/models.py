@@ -30,7 +30,6 @@ class EcommerceUserManager(BaseUserManager):
         return user
 
 
-
 class EcommerceUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=128, blank=True, null=True)
     last_name = models.CharField(max_length=128, blank=True, null=True)

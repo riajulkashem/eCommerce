@@ -1,0 +1,242 @@
+[
+{
+  "model": "user.ecommerceuser",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$3MpXJ2ixhmQcmsfQjbeNUc$OuzcfTikqbZL64upOEH9XsvTncxEmDGVDh3hKZy8PKo=",
+    "last_login": null,
+    "first_name": "Riajul",
+    "last_name": "Kashem",
+    "email": "rk@rk.com",
+    "phone": "+8801777824258",
+    "address": "Habiganj Sadar, Sylhet",
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "product.category",
+  "pk": 1,
+  "fields": {
+    "created_by": 1,
+    "created_at": "2025-03-21T00:06:55.233Z",
+    "updated_at": "2025-03-21T00:06:55.237Z",
+    "name": "Electronics"
+  }
+},
+{
+  "model": "product.category",
+  "pk": 2,
+  "fields": {
+    "created_by": 1,
+    "created_at": "2025-03-21T00:07:03.348Z",
+    "updated_at": "2025-03-21T00:07:03.350Z",
+    "name": "Clothing"
+  }
+},
+{
+  "model": "product.category",
+  "pk": 3,
+  "fields": {
+    "created_by": 1,
+    "created_at": "2025-03-21T00:07:13.032Z",
+    "updated_at": "2025-03-21T00:07:13.034Z",
+    "name": "Home & Kitchen"
+  }
+},
+{
+  "model": "product.category",
+  "pk": 4,
+  "fields": {
+    "created_by": 1,
+    "created_at": "2025-03-21T00:07:19.483Z",
+    "updated_at": "2025-03-21T00:07:19.485Z",
+    "name": "Books"
+  }
+},
+{
+  "model": "product.product",
+  "pk": 1,
+  "fields": {
+    "created_by": 1,
+    "created_at": "2025-03-21T00:08:18.501Z",
+    "updated_at": "2025-03-21T00:08:18.506Z",
+    "name": "Wireless Headphones",
+    "price": 199.99,
+    "image": "",
+    "description": "Premium noise-cancelling wireless headphones with superior sound quality and comfort. Perfect for long listening sessions, these headphones feature active noise cancellation, a 30-hour battery life, and memory foam ear cushions.",
+    "category": 1
+  }
+},
+{
+  "model": "product.product",
+  "pk": 2,
+  "fields": {
+    "created_by": 1,
+    "created_at": "2025-03-21T00:09:18.523Z",
+    "updated_at": "2025-03-21T00:09:18.529Z",
+    "name": "Smart Watch",
+    "price": 249.99,
+    "image": "",
+    "description": "Track your fitness and stay connected with this feature-packed smartwatch. Monitor your heart rate, track your workouts, receive notifications, and more with this sleek and stylish wearable device.",
+    "category": 1
+  }
+},
+{
+  "model": "product.product",
+  "pk": 3,
+  "fields": {
+    "created_by": 1,
+    "created_at": "2025-03-21T00:10:20.913Z",
+    "updated_at": "2025-03-21T00:10:20.917Z",
+    "name": "Cotton T-Shirt",
+    "price": 24.99,
+    "image": "",
+    "description": "Comfortable and stylish everyday wear made from 100% organic cotton. This breathable t-shirt features a classic fit and is available in multiple colors to match any style.",
+    "category": 2
+  }
+},
+{
+  "model": "product.product",
+  "pk": 4,
+  "fields": {
+    "created_by": 1,
+    "created_at": "2025-03-21T00:11:03.374Z",
+    "updated_at": "2025-03-21T00:11:03.379Z",
+    "name": "Denim Jeans",
+    "price": 59.99,
+    "image": "",
+    "description": "Classic fit denim jeans that combine style and durability. Made from premium denim with just the right amount of stretch for comfort throughout the day.",
+    "category": 2
+  }
+},
+{
+  "model": "product.product",
+  "pk": 5,
+  "fields": {
+    "created_by": 1,
+    "created_at": "2025-03-21T00:11:42.749Z",
+    "updated_at": "2025-03-21T00:11:42.754Z",
+    "name": "Coffee Maker",
+    "price": 89.99,
+    "image": "",
+    "description": "Programmable coffee maker with thermal carafe to keep your coffee hot for hours. Features adjustable brew strength, programmable timer, and an easy-to-use control panel.",
+    "category": 3
+  }
+},
+{
+  "model": "product.product",
+  "pk": 6,
+  "fields": {
+    "created_by": 1,
+    "created_at": "2025-03-21T00:13:40.243Z",
+    "updated_at": "2025-03-21T00:13:40.249Z",
+    "name": "Bestselling Novel",
+    "price": 432.0,
+    "image": "",
+    "description": "best selling novel",
+    "category": 4
+  }
+},
+{
+  "model": "product.product",
+  "pk": 7,
+  "fields": {
+    "created_by": 1,
+    "created_at": "2025-03-21T00:32:18.916Z",
+    "updated_at": "2025-03-21T00:32:18.920Z",
+    "name": "Brenden Booker",
+    "price": 730.0,
+    "image": "",
+    "description": "Quis sed sed sint be",
+    "category": 4
+  }
+},
+{
+  "model": "product.stock",
+  "pk": 1,
+  "fields": {
+    "created_by": null,
+    "created_at": "2025-03-21T00:08:18.505Z",
+    "updated_at": "2025-03-21T00:14:04.906Z",
+    "quantity": 200,
+    "location": "Dhaka",
+    "product": 1
+  }
+},
+{
+  "model": "product.stock",
+  "pk": 2,
+  "fields": {
+    "created_by": null,
+    "created_at": "2025-03-21T00:09:18.528Z",
+    "updated_at": "2025-03-21T00:14:11.387Z",
+    "quantity": 300,
+    "location": "Sylhet",
+    "product": 2
+  }
+},
+{
+  "model": "product.stock",
+  "pk": 3,
+  "fields": {
+    "created_by": null,
+    "created_at": "2025-03-21T00:10:20.917Z",
+    "updated_at": "2025-03-21T00:14:18.954Z",
+    "quantity": 150,
+    "location": "Khulna",
+    "product": 3
+  }
+},
+{
+  "model": "product.stock",
+  "pk": 4,
+  "fields": {
+    "created_by": null,
+    "created_at": "2025-03-21T00:11:03.378Z",
+    "updated_at": "2025-03-21T00:14:32.073Z",
+    "quantity": 843,
+    "location": "Rajshahi",
+    "product": 4
+  }
+},
+{
+  "model": "product.stock",
+  "pk": 5,
+  "fields": {
+    "created_by": null,
+    "created_at": "2025-03-21T00:11:42.753Z",
+    "updated_at": "2025-03-21T00:14:43.689Z",
+    "quantity": 434,
+    "location": "Barishal",
+    "product": 5
+  }
+},
+{
+  "model": "product.stock",
+  "pk": 6,
+  "fields": {
+    "created_by": null,
+    "created_at": "2025-03-21T00:13:40.248Z",
+    "updated_at": "2025-03-21T00:14:57.144Z",
+    "quantity": 324,
+    "location": "New York",
+    "product": 6
+  }
+},
+{
+  "model": "product.stock",
+  "pk": 7,
+  "fields": {
+    "created_by": null,
+    "created_at": "2025-03-21T00:32:18.919Z",
+    "updated_at": "2025-03-21T00:32:18.919Z",
+    "quantity": 0,
+    "location": null,
+    "product": 7
+  }
+}
+]

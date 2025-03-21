@@ -27,7 +27,7 @@ export default function ProductList() {
                         <div className="relative aspect-square overflow-hidden">
                             <Link href={`/products/${product.id}`}>
                                 <Image
-                                    src={product.image}
+                                    src={product.image ? product.image : "placehold.co/300x300"}
                                     alt={product.name}
                                     width={300}
                                     height={300}

@@ -28,7 +28,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      const validationErrors = validateProductFormData(formData, isEditMode);
+      const validationErrors = validateProductFormData(formData);
       setErrors(validationErrors);
       if (Object.keys(validationErrors).length > 0) return;
 
@@ -155,7 +155,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               accept="image/*"
               onChange={(e) => updateField("image", e.target.files?.[0] || null)}
               disabled={isLoading}
-              required={!isEditMode}
+              required={false}
             />
             {errors.image && <p className="text-sm text-destructive">{errors.image}</p>}
           </div>

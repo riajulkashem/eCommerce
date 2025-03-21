@@ -2,10 +2,9 @@ import { toast } from "sonner";
 import { getToken, removeTokens, storeToken } from "@/utilities/cookie-utils";
 import { protectedPostFetch } from "@/utilities/fetchUtils";
 import { RefreshTokenResponse, User } from "@/utilities/types";
+import {AUTH_BASE_URL, USER_BASE_URL} from "@/utilities/contstants";
 
-// Constants for API endpoints
-const V1_AUTH_API = "http://127.0.0.1:8000/api/v1/auth/";
-const V1_USER_API = "http://127.0.0.1:8000/api/v1/user/";
+
 const HEADERS = {
   "Content-Type": "application/json",
 };
@@ -19,7 +18,7 @@ const HEADERS = {
  * @throws Error if the login request fails.
  */
 export async function login(email: string, password: string): Promise<any> {
-  const response = await fetch(`${V1_AUTH_API}login/`, {
+  const response = await fetch(`${AUTH_BASE_URL}/login/`, {
     method: "POST",
     headers: HEADERS,
     credentials: "same-origin",
@@ -43,7 +42,7 @@ export async function register(
   email: string,
   password: string
 ): Promise<any> {
-  const response = await fetch(`${V1_AUTH_API}register/`, {
+  const response = await fetch(`${AUTH_BASE_URL}/register/`, {
     method: "POST",
     headers: HEADERS,
     credentials: "same-origin",
@@ -66,7 +65,7 @@ export async function refreshAccessToken(): Promise<boolean> {
   if (!refreshToken) return false;
 
   try {
-    const response = await fetch(`${V1_AUTH_API}token/refresh/`, {
+    const response = await fetch(`${AUTH_BASE_URL}/token/refresh/`, {
       method: "POST",
       headers: HEADERS,
       credentials: "same-origin",
@@ -93,7 +92,7 @@ export async function verifyToken(): Promise<boolean> {
   const accessToken = getToken("access");
   if (!accessToken) return false;
 
-  const response = await fetch(`${V1_AUTH_API}token/verify/`, {
+  const response = await fetch(`${AUTH_BASE_URL}/token/verify/`, {
     method: "POST",
     headers: HEADERS,
     credentials: "same-origin",
@@ -113,7 +112,7 @@ export async function getUser(): Promise<User | null> {
   if (!accessToken) return null;
 
   try {
-    const response = await fetch(`${V1_USER_API}detail/`, {
+    const response = await fetch(`${USER_BASE_URL}/detail/`, {
       method: "GET",
       headers: {
         ...HEADERS,
@@ -142,7 +141,7 @@ export async function logout(): Promise<void> {
   }
 
   try {
-    await protectedPostFetch(`${V1_AUTH_API}logout/`, {
+    await protectedPostFetch(`${AUTH_BASE_URL}/logout/`, {
       token: accessToken,
     });
   } catch (error) {
