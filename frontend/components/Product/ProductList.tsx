@@ -27,7 +27,7 @@ export default function ProductList() {
                         <div className="relative aspect-square overflow-hidden">
                             <Link href={`/products/${product.id}`}>
                                 <Image
-                                    src={product.image ? product.image : "placehold.co/300x300"}
+                                    src={product.image ? product.image : "https://placehold.co/300x300"}
                                     alt={product.name}
                                     width={300}
                                     height={300}
@@ -37,7 +37,7 @@ export default function ProductList() {
                         </div>
                     </CardHeader>
                     <CardContent className="px-4 pb-4">
-                        <Link href={`/products/${product.id}`}>
+                        <div>
                             <div className="mb-2 flex items-start justify-between">
                                 <div>
                                     <h3 className="font-medium">{product.name}</h3>
@@ -48,7 +48,7 @@ export default function ProductList() {
                                 </Badge>
                             </div>
                             <p className="mt-3 text-lg font-bold text-primary">${product.price}</p>
-                        </Link>
+                        </div>
                     </CardContent>
                 </Card>
             ))}

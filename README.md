@@ -11,59 +11,33 @@ This project is a full-stack e-commerce application with a Django backend and a 
   - Provides CRUD operations for `Product`, `Stock`, and `Category` models.
 - Dockerized application using Docker Compose.
 
-### Prerequisites
-
-- Docker and Docker Compose installed on your machine.
-- Git to clone the repository.
-- A terminal for running commands.
-
-### Project Structure
-````
-ecommerce/
-├── backend/           # Django backend code
-├── frontend/          # Next.js frontend code
-├── docker-compose.yml # Docker Compose configuration
-├── nginx.conf         # Nginx configuration for routing
-├── .env              # Environment variables (create this file)
-├── Makefile          # Automation for common tasks
-├── backend.md        # Backend documentation
-├── frontend.md       # Frontend documentation
-└── README.md         # Main instructions (this file)
-````
 ## How to Set Up and Run
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/riajulkashem/ecommerce.git
-cd ecommerce
+git clone https://github.com/riajulkashem/eCommerce.git
+cd eCommerce
 ```
 
 ### 2. Configure Environment Variables
 Create a .env file in the root directory with the following content:
 ```
-SECRET_KEY=your-secret-key-here
-DATABASE_NAME=postgres
-DATABASE_USER=postgres
-DATABASE_PASSWORD=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_USER=postgres
-POSTGRES_DB=postgres
-DATABASE_HOST=db
-DATABASE_PORT=5432
-DEBUG=False
-ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
-BASE_API_URL=http://127.0.0.1:8000/api/v1
+cp .env.example .env
 ```
 - Replace your-secret-key-here with a secure key (e.g., generated via `python -c "import secrets; print(secrets.token_hex(32))"`).
 ### 3. Build and Run with Docker
-Use the provided Makefile:
+```
+docker-compose up --build
+```
+If you are used to with Makefile:
 ```
 make up
 ```
+**more about commands** ``make help``
 - This builds and starts the backend, frontend, database, and Nginx services in detached mode.
 - Access the application at http://localhost (frontend) and http://localhost/api/ (backend API).
 
-### 4. Additional Commands
+#### Additional Commands For Docker 
 * Stop the application: `make down`
 * Create a superuser: `make superuser`
 * Populate dummy data: `make dummy-data` it will also create a super user with email `rk@rk.com` and `rk` password
@@ -71,10 +45,45 @@ make up
 * Clean up: `make clean`
 * See all commands: `make help`
 
-### Accessing the Application
+#### Accessing the Application
 1. Frontend: http://localhost - Interactive e-commerce interface.
 2. Backend API: http://localhost/api/ - RESTful endpoints (e.g., `/api/v1/products/`).
 3. Admin Panel: http://localhost/api/admin/ - Log in with superuser credentials.
+
+### 4. Run backend with local environment
+```
+# First navigate to backend folder
+cd backend
+
+# Copy env 
+cp .env.example .env
+
+# Create virtual environment 
+python -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install dependencies
+pip install uv
+pip install -r requirements.txt
+
+# Run development server
+python manage.py runserver
+```
+
+### 5. Run frontend with local environment
+```
+# First navigate to frontend folder
+cd frontend
+
+# Install dependencies 
+npm install
+
+# Run server
+npm run dev
+```
+
 
 ## References
 * Authentication: [DRF Next Auth](https://github.com/riajulkashem/drf-next-auth) - Guide for integrating Django REST Framework with Next.js authentication.

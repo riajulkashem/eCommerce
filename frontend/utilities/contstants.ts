@@ -1,5 +1,6 @@
 // URLS
-const BASE_API_URL: string | undefined = process.env.API_URL;
+const BASE_API_URL: string = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
+console.log("BASE_API_URL: ", BASE_API_URL);
 export const AUTH_BASE_URL = BASE_API_URL + '/auth'
 export const USER_BASE_URL = BASE_API_URL + '/user'
 export const PRODUCT_API_BASE_URL = BASE_API_URL + "/products/product/";
