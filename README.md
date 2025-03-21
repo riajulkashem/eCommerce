@@ -34,7 +34,7 @@ ecommerce/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/ecommerce.git
+git clone https://github.com/riajulkashem/ecommerce.git
 cd ecommerce
 ```
 
@@ -66,7 +66,7 @@ make up
 ### 4. Additional Commands
 * Stop the application: `make down`
 * Create a superuser: `make superuser`
-* Populate dummy data: `make dummy-data`
+* Populate dummy data: `make dummy-data` it will also create a super user with email `rk@rk.com` and `rk` password
 * View logs: `make logs`
 * Clean up: `make clean`
 * See all commands: `make help`
