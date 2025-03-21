@@ -24,7 +24,7 @@ help:
 	@echo "  -- Backend Commands (Django with UV) --"
 	@echo "  =========================================================================="
 	@echo "  make superuser      - Create a Django superuser for admin access inside the backend container"
-	@echo "  make dummy-data     - Populate the database with dummy data (requires 'populatedummydata' command)"
+	@echo "  make dummy-data     - Populate the database with dummy data from dummy_data.json file"
 	@echo "  make test-backend   - Run Django tests inside the backend container (assumes tests are configured)"
 	@echo "  make install-backend- Install backend dependencies locally using UV (for non-Docker development)"
 	@echo "  make run-backend    - Run the Django development server locally at http://localhost:8000"
@@ -76,7 +76,7 @@ superuser:
 # Populate dummy data (assumes a custom management command exists)
 .PHONY: dummy-data
 dummy-data:
-	$(DOCKER_COMPOSE) exec backend python manage.py populatedummydata
+	$(DOCKER_COMPOSE) exec backend python manage.py loaddata dummy_data.json
 
 # Clean up Docker resources (containers, images, volumes)
 .PHONY: clean
