@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import {CATEGORIES_API_BASE_URL, PRODUCT_API_BASE_URL} from "@/utilities/contstants";
 
 interface ProductFormData {
   name: string;
@@ -29,7 +30,7 @@ export const useProductData = (productId?: string): ProductData => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/v1/products/category/", {
+      const response = await fetch(CATEGORIES_API_BASE_URL, {
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
       });
@@ -44,7 +45,7 @@ export const useProductData = (productId?: string): ProductData => {
 
   const fetchProduct = async (id: string) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/products/product/${id}/`, {
+      const response = await fetch(`${PRODUCT_API_BASE_URL}/${id}/`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",

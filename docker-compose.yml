@@ -23,8 +23,8 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./static:/app/backend/static
-      - ./media:/app/backend/media
+      - static:/app/backend/static
+      - media:/app/backend/media
     env_file:
       - .env
     ports:
@@ -40,7 +40,7 @@ services:
     env_file:
       - .env
     environment:
-      - NEXT_PUBLIC_API_URL=http://nginx:80/api/v1
+      - BASE_API_URL=http://nginx:80/api/v1
 
   nginx:
     image: nginx:latest

@@ -55,7 +55,7 @@ export default function AdminProductList() {
             render: (_: any, item: Product) => (
                 <div className="flex items-center gap-3">
                     <Image
-                        src={item.image || "/placeholder.svg"}
+                        src={item.image || "https://placehold.co/30x30"}
                         alt={item.name}
                         width={40}
                         height={40}
